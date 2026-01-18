@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile
-from resume_parser import extract_text_from_pdf
-from matcher import match_resume_to_job
+from app.resume_parser import extract_text_from_pdf
+from app.matcher import match_resume_to_job
 
 app = FastAPI()
 
