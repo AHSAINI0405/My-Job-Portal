@@ -153,7 +153,7 @@ exports.getApplicantsForJob = async (req, res) => {
 };
 
 const axios = require("axios");
-
+const AI_URL = process.env.AI_SERVICE_URL;
 /**
  * AI MATCH SCORE
  */
@@ -162,7 +162,7 @@ exports.getAIMatchScore = async (req, res) => {
     .populate("user job");
 
   const response = await axios.post(
-    "http://localhost:8000/match",
+    `${AI_URL}/match`,
     {
       job_description: application.job.description,
     },
