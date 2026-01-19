@@ -1,9 +1,11 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Company = require("../models/Company");
+const Otp = require("../models/Otp");
 const { generateOTP } = require("../utils/otp");
 const sendEmail = require("../utils/sendEmail");
 const bcrypt = require("bcryptjs");
+
 // REGISTER (User / Company)
 exports.register = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -17,12 +19,12 @@ exports.register = async (req, res) => {
   if (exists) return res.status(400).json({ message: "Email already exists" });
 
   const otp = generateOTP();
-const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await Model.create({
     name,
     email,
-    password:hashedPassword,
+    password: hashedPassword,
     otp,
     otpExpiry: Date.now() + 10 * 60 * 1000,
   });
@@ -49,7 +51,7 @@ exports.verifyOTP = async (req, res) => {
     return res.status(400).json({ message: "Invalid or expired OTP" });
   }
 
-  user.isEmailVerified = true;
+  user.isVerified = true;
   user.otp = null;
   user.otpExpiry = null;
   await user.save();
@@ -66,10 +68,11 @@ exports.login = async (req, res) => {
   const user = await Model.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  if (!user.isEmailVerified)
+  if (!user.isVerified)
     return res.status(403).json({ message: "Email not verified" });
 
-  if (user.password !== password)
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid)
     return res.status(401).json({ message: "Invalid credentials" });
 
   const token = jwt.sign(
@@ -78,7 +81,7 @@ exports.login = async (req, res) => {
     { expiresIn: "7d" }
   );
 
-  res.json({ token, role });
+  res.json({ token, role, user: { name: user.name, email: user.email, role: user.role } });
 };
 
 

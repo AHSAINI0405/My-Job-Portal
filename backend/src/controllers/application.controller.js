@@ -153,23 +153,33 @@ exports.getApplicantsForJob = async (req, res) => {
 };
 
 const axios = require("axios");
-const AI_URL = process.env.AI_SERVICE_URL;
+
 /**
  * AI MATCH SCORE
  */
 exports.getAIMatchScore = async (req, res) => {
-  const application = await Application.findById(req.params.id)
-    .populate("user job");
+  try {
+    const application = await Application.findById(req.params.id)
+      .populate("user job");
 
-  const response = await axios.post(
-    `${AI_URL}/match`,
-    {
-      job_description: application.job.description,
-    },
-    {
-      headers: { "Content-Type": "multipart/form-data" },
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
     }
-  );
 
-  res.json(response.data);
+    const response = await axios.post(
+      `${process.env.AI_SERVICE_URL || "http://localhost:8000"}/match`,
+      {
+        resume_text: application.user.resume || "",
+        job_text: application.job.description
+      }
+    );
+
+    res.json(response.data);
+  } catch (err) {
+    console.error("AI match error:", err.message);
+    res.status(500).json({
+      message: "AI service error",
+      error: err.message
+    });
+  }
 };
