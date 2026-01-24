@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Briefcase, Mail, Lock, Eye, EyeOff, User, ArrowRight, Building2, UserCircle2, Shield } from 'lucide-react';
-
+const API=import.meta.env.VITE_API_URL;
 export default function Register() {
-    const API=import.meta.env.VITE_API_URL;
   const [step, setStep] = useState(1); // 1: Register, 2: Verify OTP
   const [formData, setFormData] = useState({
     email: '',
@@ -92,7 +91,6 @@ export default function Register() {
           setErrors({ submit: data.message || 'Registration failed' });
         }
       } catch (error) {
-        console.log(error);
         setErrors({ submit: 'Network error. Please try again.' });
       } finally {
         setLoading(false);
@@ -148,15 +146,14 @@ export default function Register() {
     setMessage('');
 
     try {
-      const response = await fetch(`${API}/api/auth/register`, {
+      const response = await fetch(`${API}/api/auth/resend-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
+            email: formData.email,
+  
           role: formData.role,
         }),
       });

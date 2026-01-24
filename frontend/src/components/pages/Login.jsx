@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Briefcase, Mail, Lock, Eye, EyeOff, ArrowRight, UserCircle2, Building2, Shield, AlertCircle } from 'lucide-react';
 
 export default function Login() {
-  const API = 'http://localhost:5000';
+  const API=import.meta.env.VITE_API_URL;
   
   const [formData, setFormData] = useState({
     email: '',
