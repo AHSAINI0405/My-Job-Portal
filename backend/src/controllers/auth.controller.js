@@ -94,7 +94,52 @@ exports.verifyOTP = async (req, res) => {
     return res.status(500).json({ message: "OTP verification failed" });
   }
 };
+/* =========================================================
+   RESEND OTP
+========================================================= */
+exports.resendOTP = async (req, res) => {
+  try {
+    const { email, role } = req.body;
 
+    if (!email || !role) {
+      return res.status(400).json({ message: "Email and role are required" });
+    }
+
+    const Model = role === "company" ? Company : User;
+    const user = await Model.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email already verified" });
+    }
+
+    // Generate new OTP
+    const otp = generateOTP();
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await user.save();
+
+    // Send email (should never crash the request)
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Verify your email - New OTP",
+        html: `<h2>Your new OTP: ${otp}</h2><p>Valid for 10 minutes</p>`,
+      });
+    } catch (emailError) {
+      console.error("EMAIL ERROR:", emailError.message);
+    }
+
+    return res.json({ message: "New OTP sent to your email" });
+
+  } catch (error) {
+    console.error("RESEND OTP ERROR:", error);
+    return res.status(500).json({ message: "Failed to resend OTP" });
+  }
+};
 /* =========================================================
    LOGIN
 ========================================================= */
