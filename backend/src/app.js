@@ -10,9 +10,9 @@ app.use(cors());
 app.use(express.json()); // allows JSON body
 
 // ================= DATABASE =================
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ DB error", err));
+// mongoose.connect(process.env.MONGO_URI)
+//   .then(() => console.log("✅ MongoDB connected"))
+//   .catch(err => console.error("❌ DB error", err));
 
 // ================= ROUTES =================
 app.use("/api/auth", require("./routes/auth.routes"));
