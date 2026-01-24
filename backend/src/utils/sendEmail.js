@@ -1,21 +1,18 @@
 const nodemailer = require("nodemailer");
 
-const sendEmail = async ({ to, subject, html }) => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // MUST be false for 587
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS, // Gmail App Password
-    },
-    tls: {
-      rejectUnauthorized: false, // prevents Render TLS timeout
-    },
-  });
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.BREVO_SMTP_USER,
+    pass: process.env.BREVO_SMTP_KEY,
+  },
+});
 
+const sendEmail = async ({ to, subject, html }) => {
   await transporter.sendMail({
-    from: `"Job Portal" <${process.env.EMAIL_USER}>`,
+    from: `"Job Portal" <${process.env.BREVO_SMTP_USER}>`,
     to,
     subject,
     html,
