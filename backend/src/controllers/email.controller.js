@@ -28,7 +28,7 @@ exports.emailCandidate = async (req, res) => {
   /**
    * Step 2: Send email
    */
-  await sendMail({
+  await sendEmail({
     to: candidate.email,
     subject,
     html: `

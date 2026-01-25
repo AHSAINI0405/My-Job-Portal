@@ -6,7 +6,7 @@ const Company = require("../models/Company");
 const Otp = require("../models/Otp");
 
 const { generateOTP } = require("../utils/otp");
-// const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../utils/sendEmail");
 
 /* =========================================================
    REGISTER (USER / COMPANY)
@@ -22,7 +22,8 @@ exports.register = async (req, res) => {
 
     const Model = role === "company" ? Company : User;
 
-    if (await Model.findOne({ email })) {
+    const existingUser = await Model.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
@@ -39,16 +40,24 @@ exports.register = async (req, res) => {
       isVerified: false,
     });
 
-    // ✅ RETURN OTP (frontend will email it)
-    res.status(201).json({
-      message: "Registration successful",
-      otp,
-      email,
+    // Email sending should NEVER crash registration
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Verify your email",
+        html: `<h2>Your OTP: ${otp}</h2><p>Valid for 10 minutes</p>`,
+      });
+    } catch (emailError) {
+      console.error("EMAIL ERROR:", emailError.message);
+    }
+
+    return res.status(201).json({
+      message: "Registration successful. OTP sent to email",
     });
 
   } catch (error) {
     console.error("REGISTER ERROR:", error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error during registration" });
   }
 };
 
@@ -157,12 +166,18 @@ exports.resendOTP = async (req, res) => {
     user.otpExpiry = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // ✅ RETURN OTP
-    res.json({
-      message: "OTP regenerated",
-      otp,
-      email,
-    });
+    // Send email (should never crash the request)
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Verify your email - New OTP",
+        html: `<h2>Your new OTP: ${otp}</h2><p>Valid for 10 minutes</p>`,
+      });
+    } catch (emailError) {
+      console.error("EMAIL ERROR:", emailError.message);
+    }
+
+    return res.json({ message: "New OTP sent to your email" });
 
   } catch (error) {
     console.error("RESEND OTP ERROR:", error);

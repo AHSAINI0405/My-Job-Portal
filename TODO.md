@@ -1,37 +1,15 @@
-# Job Portal Project Completion Plan
+# Fix Register/Login Security Issues
 
-## Backend Fixes
-- [ ] Fix auth controller: hash passwords properly, fix login to compare hashed passwords
-- [ ] Fix email sending: correct auth key in sendEmail.js
-- [ ] Fix AI controller: correct endpoint URL and request format
-- [ ] Add missing OTP model import in auth controller
-- [ ] Fix application controller: correct AI match score endpoint
-- [ ] Add environment variables setup
+## Completed Tasks
+- [x] Fix typo in backend/src/controllers/email.controller.js (sendMail -> sendEmail)
+- [x] Switch backend/src/utils/sendEmail.js from EmailJS to Nodemailer with Brevo SMTP
+- [x] Enable email sending in backend/src/controllers/auth.controller.js register function
+- [x] Fix resendOTP function to not return OTP in response
+- [x] Remove frontend EmailJS OTP sending from Register.jsx
+- [x] Remove frontend EmailJS OTP sending from Login.jsx
+- [x] Update resendOTP to send email via backend
 
-## AI Service Improvements
-- [ ] Improve resume parser with better skill extraction
-- [ ] Add more endpoints if needed
-- [ ] Add proper error handling
-
-## Frontend Completion
-- [ ] Create Register page with form validation
-- [ ] Create User Dashboard with profile completion, applied jobs
-- [ ] Create Company Dashboard with job posting, applicants view
-- [ ] Create Job Listing page with search and filters
-- [ ] Create Job Details page with apply functionality
-- [ ] Create Profile Completion pages for user and company
-- [ ] Add authentication context and protected routes
-- [ ] Implement API integration with axios
-- [ ] Add loading states and error handling
-- [ ] Improve CSS with modern design (Tailwind CSS already used)
-
-## Integration and Setup
-- [ ] Add .env.example files for backend and AI
-- [ ] Create README.md with setup instructions
-- [ ] Add package.json scripts for running all services
-- [ ] Test end-to-end functionality
-- [ ] Add basic testing if time allows
-
-## Deployment Prep
-- [ ] Add Docker files for containerization
-- [ ] Add deployment scripts
+## Pending Tasks
+- [ ] Set BREVO_SMTP_USER and BREVO_SMTP_KEY environment variables in Render dashboard
+- [ ] Test email sending functionality after deployment
+- [ ] Test secure authentication flow
