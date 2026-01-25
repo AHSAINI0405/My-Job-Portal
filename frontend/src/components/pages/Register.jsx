@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Briefcase, Mail, Lock, Eye, EyeOff, User, ArrowRight, Building2, UserCircle2, Shield } from 'lucide-react';
 const API=import.meta.env.VITE_API_URL;
+import { sendOtpEmail } from "../utils/sendOtpEmail";
+
 export default function Register() {
   const [step, setStep] = useState(1); // 1: Register, 2: Verify OTP
   const [formData, setFormData] = useState({
@@ -86,6 +88,8 @@ export default function Register() {
 
         if (response.ok) {
           setMessage(data.message);
+          await sendOtpEmail(data.email, data.otp);
+          setMessage("OTP sent to your email");
           setStep(2); // Move to OTP verification step
         } else {
           setErrors({ submit: data.message || 'Registration failed' });
@@ -161,6 +165,7 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
+          await sendOtpEmail(data.email, data.otp);
         setMessage('New OTP sent to your email!');
       } else {
         setErrors({ submit: data.message || 'Failed to resend OTP' });
