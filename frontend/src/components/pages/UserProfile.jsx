@@ -22,6 +22,7 @@ const UserProfile = () => {
 
   const fetchProfile = async () => {
     const res = await api.get("/api/profile/user");
+    console.log(res);
     const user = res.data;
 
     setFormData({
@@ -67,7 +68,7 @@ const UserProfile = () => {
     e.preventDefault();
     setSaving(true);
 
-    await api.put("/profile/user", {
+    await api.put("/api/profile/user", {
       ...formData,
       skills: formData.skills.split(",").map((s) => s.trim()),
     });
