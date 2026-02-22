@@ -51,10 +51,12 @@ exports.completeCompanyProfile = async (req, res) => {
     const companyId = req.user.id;
 
     const {
-      website,
-      industry,
-      description,
-      location,
+      name,
+  website,
+  industry,
+  description,
+  location,
+  logo,
     } = req.body;
 
     if (!industry || !description || !location) {
@@ -66,10 +68,12 @@ exports.completeCompanyProfile = async (req, res) => {
     const company = await Company.findByIdAndUpdate(
       companyId,
       {
+        name,
         website,
         industry,
         description,
         location,
+        logo,
         profileCompleted: true,
       },
       { new: true }

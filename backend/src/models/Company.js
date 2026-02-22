@@ -5,7 +5,10 @@ const companySchema = new mongoose.Schema(
     name: String,
     email: { type: String, unique: true },
     password: String,
-
+    logo: {
+      type: String,
+      default: "",
+  },
     // ===== PROFILE FIELDS =====
     website: String,
     industry: String,
