@@ -13,6 +13,7 @@ exports.completeUserProfile = async (req, res) => {
       experience,
       location,
       resume,
+      avatar
     } = req.body;
 
     // basic validation
@@ -32,6 +33,7 @@ exports.completeUserProfile = async (req, res) => {
         location,
         resume,
         profileCompleted: true,
+        avatar
       },
       { new: true }
     );
@@ -107,3 +109,20 @@ exports.companyProfile=async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// USER PROFILE
+exports.userProfile=async (req,res)=>{
+  try{
+    if(req.user.role !== "user"){
+      return res.status(403).json({message:"Access Denied"})}
+      const user=await User.findById(req.user.id).select("-password");
+      if(!user){
+        return res.status(404).json({message:"COmpany not found"});
+      }
+      res.status(200).json(user);
+    }
+    catch(error)
+    {
+      console.log(error);
+    }
+  };

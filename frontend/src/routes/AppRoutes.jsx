@@ -5,6 +5,8 @@ import Register from "../components/pages/Register"
 import DashboardUser from "../components/pages/DashboardUser";
 import CompanyDashboard from "../components/pages/CompanyDashboard";
 import CompanyProfile from "../components/company/CompanyProfile";
+import CreateJob from "../components/pages/CreateJob";
+import UserProfile from "../components/pages/UserProfile";
 const AppRoutes = () =>{
     const user=JSON.parse(localStorage.getItem("user"));
     return(
@@ -19,6 +21,8 @@ const AppRoutes = () =>{
             <Route path="/dashboard" element={<DashboardUser />}/>
             <Route path="/employer/dashboard" element={<CompanyDashboard/>}/>
             <Route path="/employer/profile" element={<CompanyProfile/>}/>
+            <Route path="/employer/createjob" element={<CreateJob />} />
+            <Route path="/profile" element={<UserProfile />} />
         </Routes>
         </>
     )

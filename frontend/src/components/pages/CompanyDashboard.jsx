@@ -15,7 +15,7 @@ const CompanyDashboard = () => {
 
   const fetchMyJobs = async () => {
     try {
-      const res = await api.get("/company/jobs");
+      const res = await api.get("/api/jobs/company/jobs");
       setJobs(res.data);
     } catch (error) {
       console.error("Error fetching jobs:", error);

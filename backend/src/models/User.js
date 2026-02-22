@@ -5,7 +5,10 @@ const userSchema = new mongoose.Schema(
     name: String,
     email: { type: String, unique: true },
     password: String,
-
+    avatar: {
+  type: String,
+  default: "",
+},
     // ===== PROFILE FIELDS =====
     phone: String,
     education: String,

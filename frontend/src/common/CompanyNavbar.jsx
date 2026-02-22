@@ -10,17 +10,34 @@ import {
   Menu,
   X,
 } from "lucide-react";
-
+import api from "../api/axios";
 const CompanyNavbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [company, setCompany] = useState(null);
-
+  const [companyData,setData]=useState({
+    name:"",
+    logo:"ABC"
+    })
   useEffect(() => {
     const storedCompany = JSON.parse(localStorage.getItem("company"));
     setCompany(storedCompany);
   }, []);
 
+  useEffect(()=>{
+    fetchCompany();
+  },[]);
+  const fetchCompany=async () =>{
+    try{
+      const res=await api.get("/api/profile/company");
+      console.log(res);
+      setData(res.data);
+    }
+    catch(error)
+    {
+      console.log(error);
+    }
+  }
   const handleLogout = () => {
     localStorage.removeItem("company");
     localStorage.removeItem("token");
@@ -67,7 +84,7 @@ const CompanyNavbar = () => {
             Dashboard
           </NavLink>
 
-          <NavLink to="/employer/post-job" className={linkClass}>
+          <NavLink to="/employer/createjob" className={linkClass}>
             <Briefcase size={18} />
             Post Job
           </NavLink>
@@ -91,7 +108,8 @@ const CompanyNavbar = () => {
         {/* Right Section */}
         <div className="hidden md:flex items-center gap-4">
           <div className="bg-white text-purple-600 px-4 py-1 rounded-full font-semibold shadow flex items-center gap-2">
-            🏢 {company?.name || "Company"}
+             {companyData?.name || "Company"}
+             <img src={companyData.logo} alt="logo" className="w-15 h-15"/>
           </div>
 
           <button

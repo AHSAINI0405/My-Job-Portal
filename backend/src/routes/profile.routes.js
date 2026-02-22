@@ -17,4 +17,7 @@ router.put(
 );
 
 router.get("/company", auth,profileController.companyProfile);
+router.get("/profile",auth,profileController.userProfile);
 module.exports = router;
+
+
