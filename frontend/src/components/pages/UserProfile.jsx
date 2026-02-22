@@ -80,46 +80,71 @@ const UserProfile = () => {
 
   return (
     <><Navbar/>
+   
+    
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
 
-        {/* EDIT FORM */}
-        {editing && (
-          <div className="bg-white shadow-xl rounded-2xl p-8 mb-8">
-            <h2 className="text-xl font-bold mb-6">Edit Profile</h2>
+        {editing ? (
+          /* ================= EDIT FORM ================= */
+          <div className="bg-white shadow-xl rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-6">Edit Profile</h2>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
               {/* Avatar Upload */}
               <div className="flex items-center gap-6">
                 <img
-                  src={formData.avatar || "https://via.placeholder.com/100"}
+                  src={formData.avatar || "https://via.placeholder.com/120"}
                   alt="Avatar"
-                  className="w-24 h-24 rounded-full object-cover border"
+                  className="w-28 h-28 rounded-full object-cover border-4 border-indigo-100"
                 />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                />
+
+                <label className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition">
+                  Change Avatar
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
+                </label>
               </div>
 
+              {/* Name (Readonly) */}
               <input
                 type="text"
                 value={formData.name}
                 readOnly
-                className="w-full p-3 border rounded-lg bg-gray-100"
+                className="w-full p-3 border rounded-lg bg-gray-100 cursor-not-allowed"
               />
 
-              <input
-                type="text"
-                name="phone"
-                placeholder="Phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full p-3 border rounded-lg"
-              />
+              {/* Phone */}
+              <div className="flex gap-3">
+                <select
+                  name="countryCode"
+                  value={formData.countryCode || "+1"}
+                  onChange={handleChange}
+                  className="p-3 border rounded-lg bg-white cursor-pointer"
+                >
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+61">🇦🇺 +61</option>
+                  <option value="+81">🇯🇵 +81</option>
+                </select>
 
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Phone number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="flex-1 p-3 border rounded-lg"
+                />
+              </div>
+
+              {/* Other Inputs */}
               <input
                 type="text"
                 name="education"
@@ -156,89 +181,104 @@ const UserProfile = () => {
                 className="w-full p-3 border rounded-lg"
               />
 
+              {/* Resume Upload */}
               <div>
-                <label className="block text-sm font-medium">
-                  Upload Resume (PDF)
+                <label className="block font-medium mb-2">
+                  Resume (PDF)
                 </label>
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  onChange={handleResumeUpload}
+
+                <label className="cursor-pointer inline-block bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition">
+                  Choose PDF File
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleResumeUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg transition cursor-pointer"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setEditing(false)}
+                  className="flex-1 bg-gray-300 hover:bg-gray-400 py-3 rounded-lg transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          /* ================= PROFILE VIEW ================= */
+          <div className="bg-white shadow-xl rounded-2xl p-8">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-6">
+                <img
+                  src={formData.avatar || "https://via.placeholder.com/120"}
+                  alt="Avatar"
+                  className="w-28 h-28 rounded-full object-cover border-4 border-indigo-100"
                 />
+                <h1 className="text-2xl font-bold">
+                  {formData.name}
+                </h1>
               </div>
 
               <button
-                type="submit"
-                disabled={saving}
-                className="w-full bg-indigo-600 text-white py-3 rounded-lg"
+                onClick={() => setEditing(true)}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition cursor-pointer"
               >
-                {saving ? "Saving..." : "Save Changes"}
+                Edit Profile
               </button>
-            </form>
+            </div>
+
+            <div className="space-y-3 text-gray-700">
+              <p>📞 {formData.countryCode || ""} {formData.phone || "Not added"}</p>
+              <p>🎓 {formData.education || "Not added"}</p>
+              <p>💼 {formData.experience || "Not added"}</p>
+              <p>📍 {formData.location || "Not added"}</p>
+
+              <div>
+                <p className="font-medium">Skills:</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.skills
+                    ? formData.skills.split(",").map((skill, i) => (
+                        <span
+                          key={i}
+                          className="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-sm"
+                        >
+                          {skill.trim()}
+                        </span>
+                      ))
+                    : <span className="text-gray-400">No skills</span>}
+                </div>
+              </div>
+
+              {formData.resume && (
+                <div className="mt-6">
+                  <p className="font-medium mb-2">Resume Preview:</p>
+                  <iframe
+                    src={formData.resume}
+                    title="Resume"
+                    className="w-full h-72 border rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* PROFILE VIEW */}
-        <div className="bg-white shadow-xl rounded-2xl p-8">
-
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-5">
-              <img
-                src={formData.avatar || "https://via.placeholder.com/100"}
-                alt="Avatar"
-                className="w-24 h-24 rounded-full object-cover border"
-              />
-              <h1 className="text-2xl font-bold">
-                {formData.name}
-              </h1>
-            </div>
-
-            <button
-              onClick={() => setEditing(!editing)}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
-            >
-              {editing ? "Cancel" : "Edit Profile"}
-            </button>
-          </div>
-
-          <div className="space-y-3 text-gray-700">
-            <p>📞 {formData.phone || "Not added"}</p>
-            <p>🎓 {formData.education || "Not added"}</p>
-            <p>💼 {formData.experience || "Not added"}</p>
-            <p>📍 {formData.location || "Not added"}</p>
-
-            <div>
-              <p className="font-medium">Skills:</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {formData.skills
-                  ? formData.skills.split(",").map((skill, i) => (
-                      <span
-                        key={i}
-                        className="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-sm"
-                      >
-                        {skill.trim()}
-                      </span>
-                    ))
-                  : <span className="text-gray-400">No skills</span>}
-              </div>
-            </div>
-
-            {/* PDF Viewer */}
-            {formData.resume && (
-              <div className="mt-6">
-                <p className="font-medium mb-2">Resume Preview:</p>
-                <iframe
-                  src={formData.resume}
-                  title="Resume"
-                  className="w-full h-96 border rounded-lg"
-                ></iframe>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
-    </>
+      </>
   );
 };
 

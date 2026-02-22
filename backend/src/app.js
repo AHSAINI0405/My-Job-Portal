@@ -20,9 +20,9 @@ app.use(cors(corsOptions));
 // app.options("*", cors(corsOptions)); // IMPORTANT for preflight
 
 // ================= BODY PARSER =================
-app.use(express.json());
+
 app.use(express.json({ limit: "20mb" }));
-app.use(express.urlencoded({ limit: "10mb", extended: true }));
+app.use(express.urlencoded({ limit: "20mb", extended: true }));
 // ================= ROUTES =================
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/profile", require("./routes/profile.routes"));
