@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const auth = require("../middlewares/auth.middleware");
 const profileController = require("../controllers/profile.controller");
-
+const Company=require("../models/Company");
 // user profile
 router.put(
   "/user",
