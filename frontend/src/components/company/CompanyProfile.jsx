@@ -21,6 +21,7 @@ const CompanyProfile = () => {
   const fetchCompanyProfile = async () => {
     try {
       const res = await api.get("/api/profile/company");
+      console.log(res);
       setFormData(res.data);
     } catch (error) {
       console.error(error);

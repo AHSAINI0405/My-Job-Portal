@@ -85,3 +85,24 @@ exports.completeCompanyProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// COMPANY PROFILE
+
+exports.companyProfile=async (req, res) => {
+  try {
+    if (req.user.role !== "company") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const company = await Company.findById(req.user.id).select("-password");
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    res.status(200).json(company);
+  } catch (error) {
+    console.error("Get company profile error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

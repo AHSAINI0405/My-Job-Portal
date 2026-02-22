@@ -18,7 +18,7 @@ const AppRoutes = () =>{
             <Route path="/register" element={<Register />}/>
             <Route path="/dashboard" element={<DashboardUser />}/>
             <Route path="/employer/dashboard" element={<CompanyDashboard/>}/>
-            <Route path="employer/profile" element={<CompanyProfile/>}/>
+            <Route path="/employer/profile" element={<CompanyProfile/>}/>
         </Routes>
         </>
     )
