@@ -20,7 +20,7 @@ const CompanyProfile = () => {
 
   const fetchCompanyProfile = async () => {
     try {
-      const res = await api.get("/company/profile");
+      const res = await api.get("/api/profile/company");
       setFormData(res.data);
     } catch (error) {
       console.error(error);
@@ -49,7 +49,7 @@ const CompanyProfile = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.put("/profile/company", formData);
+      await api.put("/api/profile/company", formData);
       alert("Profile Updated Successfully 🚀");
     } catch (error) {
       console.error(error);
