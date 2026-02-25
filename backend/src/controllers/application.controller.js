@@ -17,7 +17,7 @@ exports.shortlistCandidate = async (req, res) => {
 
     application.status = "shortlisted";
     await application.save();
-
+    console.log("Successfully done");
     // 📧 Email candidate
     await sendEmail({
       to: application.user.email,

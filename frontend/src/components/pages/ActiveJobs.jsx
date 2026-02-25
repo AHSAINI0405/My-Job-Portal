@@ -47,7 +47,7 @@ const ActiveJobs = () => {
 
                 {/* Company Name */}
                 <p className="text-indigo-600 font-medium mb-4">
-                  {job.company?.companyName}
+                  {job.company?.name}
                 </p>
 
                 {/* Description */}
