@@ -10,4 +10,9 @@ router.get("/company/jobs", auth, job.getCompanyJobs);
 // candidate
 router.get("/jobs", auth, job.getActiveJobs);
 
+// COMPANY → UPDATE JOB
+router.put("/jobs/:id", auth, companyProfileGuard, job.updateJob);
+
+// COMPANY → DELETE JOB
+router.delete("/jobs/:id", auth, companyProfileGuard, job.deleteJob);
 module.exports = router;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import Navbar from "../../common/Navbar";
+import Navbar from "../../common/CompanyNavbar";
 import {
   Mail,
   FileText,
