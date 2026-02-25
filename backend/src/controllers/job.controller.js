@@ -7,7 +7,7 @@ const Job = require("../models/Job");
 exports.createJob = async (req, res) => {
   try {
     const companyId = req.user.id;
-    const { title, description, location, salary, jobType, dueDate } = req.body;
+    const { title, description, location, salary, jobType, dueDate,vacancy,qualifications,responsibilities } = req.body;
 
     if (!title || !dueDate) {
       return res.status(400).json({
@@ -22,6 +22,9 @@ exports.createJob = async (req, res) => {
       salary,
       jobType,
       dueDate,
+      vacancy,
+      qualifications,
+      responsibilities,
       company: companyId
     });
 

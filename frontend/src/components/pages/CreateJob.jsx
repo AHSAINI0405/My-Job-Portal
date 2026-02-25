@@ -13,6 +13,9 @@ const CreateJob = () => {
     salary: "",
     jobType: "",
     dueDate: "",
+    vacancy:"",
+    responsibilities:"",
+    qualifications:""
   });
 
   const [loading, setLoading] = useState(false);
@@ -92,7 +95,30 @@ const CreateJob = () => {
               onChange={handleChange}
               className="w-full p-3 border rounded-lg"
             />
-
+            <input
+              type="text"
+              name="Vacancy"
+              placeholder="Vacancy"
+              value={formData.vacancy}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg"
+            />
+            <input
+              type="text"
+              name="salary"
+              placeholder="Qualifications"
+              value={formData.qualifications}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg"
+            />
+            <input
+              type="text"
+              name="salary"
+              placeholder="Responsibilities"
+              value={formData.responsibilities}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg"
+            />
             <select
               name="jobType"
               value={formData.jobType}

@@ -17,6 +17,9 @@ const jobSchema = new mongoose.Schema(
     location: String,
     salary: String,
     jobType: String,
+    vacancy:String,
+    qualifications:String,
+    responsibilities:String,
 
     dueDate: {
       type: Date,
