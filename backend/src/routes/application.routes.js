@@ -37,4 +37,9 @@ router.patch(
   applicationController.rejectCandidate
 );
 
+router.get(
+  "/employer/applications",
+  protect,
+  applicationController.getCompanyApplications
+);
 module.exports = router;

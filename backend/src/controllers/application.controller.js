@@ -3,6 +3,21 @@ const Job = require("../models/Job");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 
+exports.getCompanyApplications = async (req, res) => {
+  try {
+    const applications = await Application.find({
+      company: req.user.id, // employer id
+    })
+      .populate("user", "name email skills resume")
+      .populate("job", "title description");
+
+    res.json(applications);
+  } catch (error) {
+    console.error("Company applications error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 /**
  * SHORTLIST CANDIDATE
  */
