@@ -18,16 +18,16 @@ exports.shortlistCandidate = async (req, res) => {
     application.status = "shortlisted";
     await application.save();
     console.log("Successfully done");
-    // 📧 Email candidate
-    await sendEmail({
-      to: application.user.email,
-      subject: "You are shortlisted 🎉",
-      html: `
-        <h3>Congratulations ${application.user.name}</h3>
-        <p>You have been shortlisted for <b>${application.job.title}</b>.</p>
-        <p>The company will contact you soon.</p>
-      `,
-    });
+    // // 📧 Email candidate
+    // await sendEmail({
+    //   to: application.user.email,
+    //   subject: "You are shortlisted 🎉",
+    //   html: `
+    //     <h3>Congratulations ${application.user.name}</h3>
+    //     <p>You have been shortlisted for <b>${application.job.title}</b>.</p>
+    //     <p>The company will contact you soon.</p>
+    //   `,
+    // });
 
     res.json({ message: "Candidate shortlisted & email sent" });
 
@@ -52,16 +52,16 @@ exports.rejectCandidate = async (req, res) => {
     application.status = "rejected";
     await application.save();
 
-    // 📧 Email candidate
-    await sendEmail({
-      to: application.user.email,
-      subject: "Application Update",
-      html: `
-        <h3>Hello ${application.user.name}</h3>
-        <p>Thank you for applying for <b>${application.job.title}</b>.</p>
-        <p>We regret to inform you that you were not selected.</p>
-      `,
-    });
+    // // 📧 Email candidate
+    // await sendEmail({
+    //   to: application.user.email,
+    //   subject: "Application Update",
+    //   html: `
+    //     <h3>Hello ${application.user.name}</h3>
+    //     <p>Thank you for applying for <b>${application.job.title}</b>.</p>
+    //     <p>We regret to inform you that you were not selected.</p>
+    //   `,
+    // });
 
     res.json({ message: "Candidate rejected & email sent" });
 
