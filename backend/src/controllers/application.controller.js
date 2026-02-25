@@ -143,13 +143,20 @@ exports.getAppliedJobs = async (req, res) => {
  * COMPANY VIEW APPLICANTS
  */
 exports.getApplicantsForJob = async (req, res) => {
-  const jobId = req.params.jobId;
+  try {
+    const jobId = req.params.jobId;
 
-  const applications = await Application.find({
-    job: jobId,
-  }).populate("user");
+    const applications = await Application.find({
+      job: jobId,
+    })
+      .populate("user", "name email skills resume")
+      .populate("job", "title description");
 
-  res.json(applications);
+    res.json(applications);
+  } catch (error) {
+    console.error("Get applicants error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 const axios = require("axios");
