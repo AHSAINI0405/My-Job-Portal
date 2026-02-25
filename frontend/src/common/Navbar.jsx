@@ -52,7 +52,7 @@ const Navbar = ({ username }) => {
             Jobs
           </NavLink>
 
-          <NavLink to="/applications" className={navLinkClass}>
+          <NavLink to="/myapplications" className={navLinkClass}>
             <FileText size={18} />
             Applications
           </NavLink>

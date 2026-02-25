@@ -7,6 +7,9 @@ import CompanyDashboard from "../components/pages/CompanyDashboard";
 import CompanyProfile from "../components/company/CompanyProfile";
 import CreateJob from "../components/pages/CreateJob";
 import UserProfile from "../components/pages/UserProfile";
+import ActiveJobs from "../components/pages/ActiveJobs";
+import JobApplicants from "../components/pages/JobApplicants";
+import MyApplications from "../components/pages/MyApplications";
 const AppRoutes = () =>{
     const user=JSON.parse(localStorage.getItem("user"));
     return(
@@ -23,6 +26,9 @@ const AppRoutes = () =>{
             <Route path="/employer/profile" element={<CompanyProfile/>}/>
             <Route path="/employer/createjob" element={<CreateJob />} />
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/jobs" element={<ActiveJobs/>}/>
+            <Route path="/company/jobs/:jobId/applicants" element={<JobApplicants/>}/>
+            <Route path="/myapplications" element={<MyApplications/>}/>
         </Routes>
         </>
     )
