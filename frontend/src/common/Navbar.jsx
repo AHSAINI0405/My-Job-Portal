@@ -42,7 +42,7 @@ const Navbar = ({ username }) => {
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-4">
 
-          <NavLink to="/" className={navLinkClass}>
+          <NavLink to="/dashboard" className={navLinkClass}>
             <Home size={18} />
             Home
           </NavLink>

@@ -97,7 +97,7 @@ const CreateJob = () => {
             />
             <input
               type="text"
-              name="Vacancy"
+              name="vacancy"
               placeholder="Vacancy"
               value={formData.vacancy}
               onChange={handleChange}
@@ -105,7 +105,7 @@ const CreateJob = () => {
             />
             <input
               type="text"
-              name="salary"
+              name="qualifications"
               placeholder="Qualifications"
               value={formData.qualifications}
               onChange={handleChange}
@@ -113,7 +113,7 @@ const CreateJob = () => {
             />
             <input
               type="text"
-              name="salary"
+              name="responsibilities"
               placeholder="Responsibilities"
               value={formData.responsibilities}
               onChange={handleChange}

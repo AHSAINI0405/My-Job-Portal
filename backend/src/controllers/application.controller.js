@@ -147,7 +147,9 @@ exports.applyToJob = async (req, res) => {
 exports.getAppliedJobs = async (req, res) => {
   const applications = await Application.find({
     user: req.user.id,
-  }).populate("job");
+  }).populate("job")
+  .populate("company")
+  .populate("user");
 
   res.json(applications);
 };

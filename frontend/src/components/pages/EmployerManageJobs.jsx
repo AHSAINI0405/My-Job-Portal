@@ -12,7 +12,10 @@ const EmployerManageJobs = () => {
     location: "",
     salary: "",
     jobType: "",
-    dueDate: ""
+    dueDate: "",
+    vacancy:"",
+    responsibilities:"",
+    qualifications:""
   });
 
   const [editingId, setEditingId] = useState(null);
@@ -56,7 +59,10 @@ const EmployerManageJobs = () => {
       location: "",
       salary: "",
       jobType: "",
-      dueDate: ""
+      dueDate: "",
+      vacancy:"",
+    responsibilities:"",
+    qualifications:""
     });
 
     setEditingId(null);
@@ -71,7 +77,10 @@ const EmployerManageJobs = () => {
       location: job.location,
       salary: job.salary,
       jobType: job.jobType,
-      dueDate: job.dueDate?.substring(0, 10)
+      dueDate: job.dueDate?.substring(0, 10),
+      vacancy:job.vacancy,
+    responsibilities:job.responsibilities,
+    qualifications:job.qualifications
     });
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -138,6 +147,26 @@ const EmployerManageJobs = () => {
                   className="input-style"
                 />
 
+                <input
+                  name="vacancy"
+                  placeholder="Vacancy"
+                  value={formData.vacancy}
+                  onChange={handleChange}
+                  className="input-style"
+                />
+<input                  name="responsibilities"
+                  placeholder="Responsibilities"
+                  value={formData.responsibilities}
+                  onChange={handleChange}
+                  className="input-style"
+                />
+<input
+                  name="qualifications"
+                  placeholder="Qualifications"
+                  value={formData.qualifications}
+                  onChange={handleChange}
+                  className="input-style"
+                />
                 <input
                   name="jobType"
                   placeholder="Job Type"
