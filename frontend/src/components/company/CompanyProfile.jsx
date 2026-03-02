@@ -13,20 +13,24 @@ const CompanyProfile = () => {
   });
 
   const [saving, setSaving] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchCompanyProfile();
   }, []);
 
   const fetchCompanyProfile = async () => {
-    try {
-      const res = await api.get("/api/profile/company");
-      console.log(res);
-      setFormData(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    setLoading(true);
+
+    const res = await api.get("/api/profile/company");
+    setFormData(res.data);
+
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Handle input change
   const handleChange = (e) => {
@@ -67,7 +71,30 @@ const CompanyProfile = () => {
   };
 
   const progress = calculateProgress();
+  if (loading) {
+  return (
+    <>
+      <CompanyNavbar />
 
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+        <div className="flex gap-4">
+
+          <div className="wave w-8 h-8 rounded-full bg-indigo-700"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-green-500"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-sky-400"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-yellow-400"></div>
+
+        </div>
+
+      </div>
+
+    </>
+  );
+}
   return (
     <>
       <CompanyNavbar />

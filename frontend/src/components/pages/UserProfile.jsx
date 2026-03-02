@@ -15,14 +15,17 @@ const UserProfile = () => {
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
   const fetchProfile = async () => {
+  try {
+    setLoading(true);
+
     const res = await api.get("/api/profile/user");
-    console.log(res);
     const user = res.data;
 
     setFormData({
@@ -34,8 +37,15 @@ const UserProfile = () => {
       location: user.location || "",
       resume: user.resume || "",
       avatar: user.avatar || "",
+      countryCode: user.countryCode || "+91",
     });
-  };
+
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleChange = (e) => {
     setFormData({
@@ -77,11 +87,34 @@ const UserProfile = () => {
     fetchProfile();
     setSaving(false);
   };
-
+if (loading) {
   return (
-    <><Navbar/>
-   
+    <>
+      <Navbar />
+
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+        <div className="flex gap-4">
+
+          <div className="wave w-8 h-8 rounded-full bg-indigo-700"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-green-500"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-sky-400"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-yellow-400"></div>
+
+        </div>
+
+      </div>
+
+    </>
+  );
+}
+  return (
     
+    <>
+        <Navbar/>
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
 

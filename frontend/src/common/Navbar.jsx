@@ -61,6 +61,7 @@ const Navbar = ({ username }) => {
             <User size={18} />
             Profile
           </NavLink>
+          
         </div>
 
         {/* Right Section */}

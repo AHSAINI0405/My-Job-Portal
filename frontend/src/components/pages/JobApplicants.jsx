@@ -142,7 +142,7 @@ const JobApplicants = () => {
         `<iframe width='100%' height='100%' src='${app.user.resume}'></iframe>`
       );
     }}
-    className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+    className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:cursor-pointer"
   >
     View Resume
   </button>
@@ -155,7 +155,7 @@ const JobApplicants = () => {
                         onClick={() =>
                           updateStatus(app._id, "shortlist")
                         }
-                        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+                        className="flex hover:cursor-pointer items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
                       >
                         <CheckCircle size={16} />
                         Shortlist
@@ -165,7 +165,7 @@ const JobApplicants = () => {
                         onClick={() =>
                           updateStatus(app._id, "reject")
                         }
-                        className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+                        className="flex hover:cursor-pointer items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
                       >
                         <XCircle size={16} />
                         Reject

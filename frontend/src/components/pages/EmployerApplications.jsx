@@ -49,7 +49,22 @@ const EmployerApplications = () => {
           </h1>
 
           {loading ? (
-            <p className="text-gray-500">Loading applications...</p>
+           <div className="min-h-[60vh] flex items-center justify-center">
+
+    <div className="flex gap-4">
+
+      <div className="wave w-8 h-8 rounded-full bg-indigo-700"></div>
+
+      <div className="wave w-8 h-8 rounded-full bg-green-500"></div>
+
+      <div className="wave w-8 h-8 rounded-full bg-sky-400"></div>
+
+      <div className="wave w-8 h-8 rounded-full bg-yellow-400"></div>
+
+    </div>
+
+  </div>
+
           ) : applications.length === 0 ? (
             <div className="bg-white p-10 rounded-2xl shadow text-center">
               <p className="text-gray-500 text-lg">

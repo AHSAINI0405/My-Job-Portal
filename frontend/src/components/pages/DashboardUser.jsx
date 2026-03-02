@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import Navbar from "../../common/Navbar";
+import { ReceiptText } from "lucide-react";
 
 import {
   PieChart,
@@ -9,16 +10,24 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { NavLink } from "react-router-dom";
 
 const DashboardUser = () => {
   const [applications, setApplications] = useState([]);
+  const [selectedApp, setSelectedApp] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     fetchApplications();
   }, []);
-
+useEffect(() => {
+  if (selectedApp) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+}, [selectedApp]);
   const fetchApplications = async () => {
     const res = await api.get("/api/applications/me");
     setApplications(res.data);
@@ -64,44 +73,69 @@ const DashboardUser = () => {
 
         {/* ================= SIDEBAR ================= */}
 
-        <div className="w-64 bg-white shadow-lg p-5">
+        <div className="w-64 bg-gradient-to-b from-indigo-600 to-indigo-800 text-white shadow-xl p-5">
 
-          <div className="text-center">
+  <div className="text-center">
 
-            <img
-              src={
-                user?.avatar ||
-                "https://i.pravatar.cc/150"
-              }
-              className="w-24 h-24 rounded-full mx-auto"
-            />
+  
+    <h2 className="mt-3 font-bold text-lg">
+      {user?.name}
+    </h2>
 
-            <h2 className="mt-3 font-bold text-lg">
-              {user?.name}
-            </h2>
+    <p className="text-sm text-indigo-200">
+      {user?.email}
+    </p>
 
-            <p className="text-sm text-gray-500">
-              {user?.email}
-            </p>
+  </div>
 
-          </div>
+  <hr className="my-5 border-indigo-400" />
 
-          <hr className="my-5" />
+ <div className="space-y-2 bg-indigo-600 p-3 rounded-xl">
 
-          <ul className="space-y-3">
+      <NavLink
+        to="/dashboard"
+        className={({ isActive }) =>
+          `block px-4 py-2 rounded-lg font-semibold transition 
+          ${
+            isActive
+              ? "bg-white text-indigo-700"
+              : "text-white hover:bg-indigo-700"
+          }`
+        }
+      >
+        Dashboard
+      </NavLink>
 
-            <li className="font-semibold text-indigo-600">
-              Dashboard
-            </li>
+      <NavLink
+        to="/myapplications"
+        className={({ isActive }) =>
+          `block px-4 py-2 rounded-lg transition 
+          ${
+            isActive
+              ? "bg-white text-indigo-700"
+              : "text-white hover:bg-indigo-700"
+          }`
+        }
+      >
+        My Applications
+      </NavLink>
 
-            <li>My Applications</li>
+      <NavLink
+        to="/profile"
+        className={({ isActive }) =>
+          `block px-4 py-2 rounded-lg transition 
+          ${
+            isActive
+              ? "bg-white text-indigo-700"
+              : "text-white hover:bg-indigo-700"
+          }`
+        }
+      >
+        Profile
+      </NavLink>
 
-            <li>Profile</li>
-
-            <li>Settings</li>
-
-          </ul>
-        </div>
+    </div>
+</div>
 
         {/* ================= MAIN ================= */}
 
@@ -143,13 +177,13 @@ const DashboardUser = () => {
 
           {/* ===== Chart ===== */}
 
-          <div className="bg-white p-6 rounded-xl shadow mb-6">
+          <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-xl mb-6">
 
-            <h2 className="font-semibold mb-3">
-              Applications Overview
-            </h2>
+  <h2 className="font-semibold mb-3 text-lg">
+    Applications Overview
+  </h2>
 
-            <PieChart width={400} height={300}>
+            <PieChart width={420} height={300}>
               <Pie
                 data={data}
                 cx="50%"
@@ -182,9 +216,9 @@ const DashboardUser = () => {
 
             {applications.map((app) => (
               <div
-                key={app._id}
-                className="border p-4 rounded-lg mb-3"
-              >
+  key={app._id}
+  className="border border-gray-200 p-5 rounded-xl mb-3 shadow hover:shadow-lg transition bg-white"
+>
                 <h3 className="font-bold">
                   {app.job?.title}
                 </h3>
@@ -192,13 +226,19 @@ const DashboardUser = () => {
                 <p className="text-sm text-gray-500">
                   {app.job?.description}
                 </p>
-                <p className="text-sm text-gray-500">
-                  {app.company?.name}
-                </p>
 
-                <p className="text-sm mt-2">
+                <p className="text-sm">
                   Status: {app.status}
                 </p>
+
+                <button
+                  onClick={() => setSelectedApp(app)}
+                  className="flex gap-2 mt-2 bg-violet-500 text-white px-3 py-1 rounded hover:bg-violet-600"
+                >
+                  <ReceiptText size={18} />
+                  View Details
+                </button>
+
               </div>
             ))}
 
@@ -207,6 +247,79 @@ const DashboardUser = () => {
         </div>
 
       </div>
+
+      {/* ================= MODAL ================= */}
+
+      {selectedApp && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+
+    <div className="bg-white w-[750px] max-h-[90vh] overflow-y-auto rounded-2xl p-6 shadow-2xl">
+
+      <h2 className="text-2xl font-bold mb-4 text-indigo-600">
+        Job Details
+      </h2>
+
+      <p className="font-semibold text-lg">
+        {selectedApp.job?.title}
+      </p>
+
+      <p className="text-gray-500">
+        {selectedApp.job?.company?.companyName}
+      </p>
+
+      <hr className="my-3" />
+
+      <Info label="Description" value={selectedApp.job?.description} />
+      <Info label="Location" value={selectedApp.job?.location} />
+      <Info label="Salary" value={selectedApp.job?.salary} />
+      <Info label="Job Type" value={selectedApp.job?.jobType} />
+      <Info label="Vacancy" value={selectedApp.job?.vacancy} />
+      <Info label="Qualifications" value={selectedApp.job?.qualifications} />
+      <Info label="Responsibilities" value={selectedApp.job?.responsibilities} />
+
+      <Info
+        label="Due Date"
+        value={
+          new Date(
+            selectedApp.job?.dueDate
+          ).toLocaleDateString()
+        }
+      />
+
+      <hr className="my-3" />
+
+      <h3 className="font-semibold">
+        Your Resume
+      </h3>
+
+      {selectedApp.user?.resume ? (
+        <a
+          href={selectedApp.user.resume}
+          target="_blank"
+          className="text-indigo-600 underline"
+        >
+          View Resume
+        </a>
+      ) : (
+        <p>No resume uploaded</p>
+      )}
+
+      <div className="flex justify-end mt-5">
+
+        <button
+          onClick={() => setSelectedApp(null)}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+
     </>
   );
 };
@@ -214,19 +327,29 @@ const DashboardUser = () => {
 export default DashboardUser;
 
 
-
 // ================= STAT CARD =================
 
 const StatCard = ({ title, value, color }) => {
   return (
     <div
-      className={`text-white p-5 rounded-xl shadow ${color}`}
+      className={`text-white p-5 rounded-2xl shadow-lg hover:scale-105 transition ${color}`}
     >
-      <p className="text-sm">{title}</p>
+      <p className="text-sm opacity-80">
+        {title}
+      </p>
 
-      <h2 className="text-2xl font-bold">
+      <h2 className="text-3xl font-bold">
         {value}
       </h2>
     </div>
+  );
+};
+const Info = ({ label, value }) => {
+  return (
+    <p className="mb-2">
+      <b>{label}:</b>
+      <br />
+      {value || "N/A"}
+    </p>
   );
 };

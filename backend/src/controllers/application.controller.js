@@ -166,7 +166,7 @@ exports.getApplicantsForJob = async (req, res) => {
     const applications = await Application.find({
       job: jobId,
     })
-      .populate("user", "name email skills resume")
+      .populate("user")
       .populate("job", "title description");
 
     res.json(applications);

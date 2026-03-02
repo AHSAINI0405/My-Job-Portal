@@ -7,20 +7,48 @@ import { MapPin, Briefcase, Calendar, IndianRupee } from "lucide-react";
 const ActiveJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
-
+const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchJobs();
   }, []);
 
   const fetchJobs = async () => {
-    try {
-      const res = await api.get("/api/jobs/jobs");
-      setJobs(res.data);
-    } catch (error) {
-      console.error("Error fetching jobs:", error);
-    }
-  };
+  try {
+    setLoading(true);
 
+    const res = await api.get("/api/jobs/jobs");
+    setJobs(res.data);
+
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+if (loading) {
+  return (
+    <>
+      <Navbar />
+
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+        <div className="flex gap-4">
+
+          <div className="wave w-8 h-8 rounded-full bg-indigo-700"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-green-500"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-sky-400"></div>
+
+          <div className="wave w-8 h-8 rounded-full bg-yellow-400"></div>
+
+        </div>
+
+      </div>
+
+    </>
+  );
+}
   return (
     <>
       <Navbar />
