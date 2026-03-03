@@ -132,9 +132,11 @@ exports.resendOtp = async (req, res) => {
 // ================= LOGIN =================
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password,role } = req.body;
 
     const user = await User.findOne({ email });
+    if(!role)
+      return res.status(400).json({message:"Invalid Role"});
     if (!user)
       return res.status(400).json({ message: "Invalid credentials" });
 
@@ -151,9 +153,18 @@ exports.login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ token, role: user.role });
+    return res.json({
+      token,
+      role: user.role,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: "Login failed" });
   }
 };
 
