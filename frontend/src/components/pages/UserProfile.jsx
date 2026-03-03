@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { useLocation } from "react-router-dom";
 import Navbar from "../../common/Navbar";
 const UserProfile = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,20 @@ const UserProfile = () => {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const location = useLocation();
+const [alertMessage, setAlertMessage] = useState("");
+
+useEffect(() => {
+  if (location.state?.message) {
+    setAlertMessage(location.state.message);
+
+    // Auto hide after 4 seconds
+    setTimeout(() => {
+      setAlertMessage("");
+    }, 4000);
+  }
+}, [location]);
+  
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -117,7 +132,11 @@ if (loading) {
         <Navbar/>
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
-
+      {alertMessage && (
+  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    {alertMessage}
+  </div>
+)}
         {editing ? (
           /* ================= EDIT FORM ================= */
           <div className="bg-white shadow-xl rounded-2xl p-8">

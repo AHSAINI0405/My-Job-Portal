@@ -9,7 +9,9 @@ import {
   Menu,
   X,
 } from "lucide-react";
-
+const storedUser = localStorage.getItem("user");
+const user = storedUser ? JSON.parse(storedUser) : null;
+console.log(user);
 const Navbar = ({ username }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -68,9 +70,20 @@ const Navbar = ({ username }) => {
         <div className="hidden md:flex items-center gap-4">
 
           {/* Username */}
-          <div className="bg-white text-blue-600 px-4 py-1 rounded-full font-semibold shadow-sm">
-            👤 {username}
-          </div>
+          <div className="flex items-center gap-3">
+  <div className="bg-white text-blue-600 px-4 py-1 rounded-full font-semibold shadow-sm">
+    👤 {username}
+  </div>
+
+  {user && !user.profileCompleted && (
+    <span
+      onClick={() => navigate("/profile")}
+      className="text-xs bg-red-500 text-white px-3 py-1 rounded-full cursor-pointer hover:bg-red-600 transition"
+    >
+      Complete Profile
+    </span>
+  )}
+</div>
 
           {/* Logout */}
           <button

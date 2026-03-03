@@ -13,50 +13,68 @@ import MyApplications from "../components/pages/MyApplications";
 import EmployerApplications from "../components/pages/EmployerApplications";
 import EmployerManageJobs from "../components/pages/EmployerManageJobs";
 import ForgotPassword from "../components/pages/ForgotPassword";
-const AppRoutes = () => {
 
-  // ✅ Safe parsing
+const AppRoutes = () => {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
 
   return (
     <Routes>
-
       {/* Public Route */}
       <Route path="/" element={<Home />} />
 
-      {/* If NOT logged in → Only allow Home, Login, Register */}
+      {/* ================= NOT LOGGED IN ================= */}
       {!user ? (
         <>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword/>} />
-          {/* Block all other routes */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<Navigate to="/" />} />
         </>
       ) : (
         <>
-          {/* If logged in → Block login/register */}
+          {/* Block login/register when logged in */}
           <Route path="/login" element={<Navigate to="/" />} />
           <Route path="/register" element={<Navigate to="/" />} />
-            
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={<DashboardUser />} />
-          <Route path="/employer/dashboard" element={<CompanyDashboard />} />
-          <Route path="/employer/profile" element={<CompanyProfile />} />
-          <Route path="/employer/createjob" element={<CreateJob />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/jobs" element={<ActiveJobs />} />
-          <Route path="/company/jobs/:jobId/applicants" element={<JobApplicants />} />
-          <Route path="/myapplications" element={<MyApplications />} />
-          <Route path="/employer/applications" element={<EmployerApplications />} />
-          <Route path="/employer/manage-jobs" element={<EmployerManageJobs />} />
 
-          {/* Unknown route redirect */}
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* ================= PROFILE NOT COMPLETED ================= */}
+          {!user.profileCompleted ? (
+            <>
+              <Route path="/profile" element={<UserProfile />} />
+              <Route
+  path="*"
+  element={
+    <Navigate
+      to="/profile"
+      state={{ message: "Please complete your profile before accessing other sections." }}
+    />
+  }
+/>
+            </>
+          ) : (
+            <>
+              {/* ================= FULL ACCESS ================= */}
+
+              {/* User Routes */}
+              <Route path="/dashboard" element={<DashboardUser />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/jobs" element={<ActiveJobs />} />
+              <Route path="/myapplications" element={<MyApplications />} />
+
+              {/* Employer Routes */}
+              <Route path="/employer/dashboard" element={<CompanyDashboard />} />
+              <Route path="/employer/profile" element={<CompanyProfile />} />
+              <Route path="/employer/createjob" element={<CreateJob />} />
+              <Route path="/employer/applications" element={<EmployerApplications />} />
+              <Route path="/employer/manage-jobs" element={<EmployerManageJobs />} />
+              <Route path="/company/jobs/:jobId/applicants" element={<JobApplicants />} />
+
+              {/* Unknown route */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </>
+          )}
         </>
       )}
-
     </Routes>
   );
 };
