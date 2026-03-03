@@ -72,7 +72,7 @@ const Navbar = ({ username }) => {
           {/* Username */}
           <div className="flex items-center gap-3">
   <div className="bg-white text-blue-600 px-4 py-1 rounded-full font-semibold shadow-sm">
-    👤 {username}
+    👤 {user.name}
   </div>
 
   {user && !user.profileCompleted && (

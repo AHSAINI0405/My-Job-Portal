@@ -20,7 +20,6 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* Public Route */}
       <Route path="/" element={<Home />} />
 
       {/* ================= NOT LOGGED IN ================= */}
@@ -33,44 +32,80 @@ const AppRoutes = () => {
         </>
       ) : (
         <>
-          {/* Block login/register when logged in */}
+          {/* Block login/register */}
           <Route path="/login" element={<Navigate to="/" />} />
           <Route path="/register" element={<Navigate to="/" />} />
 
-          {/* ================= PROFILE NOT COMPLETED ================= */}
-          {!user.profileCompleted ? (
+          {/* ================= USER ROLE ================= */}
+          {user.role === "user" && (
             <>
-              <Route path="/profile" element={<UserProfile />} />
-              <Route
-  path="*"
-  element={
-    <Navigate
-      to="/profile"
-      state={{ message: "Please complete your profile before accessing other sections." }}
-    />
-  }
-/>
+              {!user.profileCompleted ? (
+                <>
+                  <Route path="/profile" element={<UserProfile />} />
+                  <Route
+                    path="*"
+                    element={
+                      <Navigate
+                        to="/profile"
+                        state={{
+                          message:
+                            "Please complete your profile before accessing other sections.",
+                        }}
+                      />
+                    }
+                  />
+                </>
+              ) : (
+                <>
+                  <Route path="/dashboard" element={<DashboardUser />} />
+                  <Route path="/profile" element={<UserProfile />} />
+                  <Route path="/jobs" element={<ActiveJobs />} />
+                  <Route path="/myapplications" element={<MyApplications />} />
+                  <Route path="*" element={<Navigate to="/dashboard" />} />
+                </>
+              )}
             </>
-          ) : (
+          )}
+
+          {/* ================= COMPANY ROLE ================= */}
+          {user.role === "company" && (
             <>
-              {/* ================= FULL ACCESS ================= */}
-
-              {/* User Routes */}
-              <Route path="/dashboard" element={<DashboardUser />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/jobs" element={<ActiveJobs />} />
-              <Route path="/myapplications" element={<MyApplications />} />
-
-              {/* Employer Routes */}
-              <Route path="/employer/dashboard" element={<CompanyDashboard />} />
-              <Route path="/employer/profile" element={<CompanyProfile />} />
-              <Route path="/employer/createjob" element={<CreateJob />} />
-              <Route path="/employer/applications" element={<EmployerApplications />} />
-              <Route path="/employer/manage-jobs" element={<EmployerManageJobs />} />
-              <Route path="/company/jobs/:jobId/applicants" element={<JobApplicants />} />
-
-              {/* Unknown route */}
-              <Route path="*" element={<Navigate to="/" />} />
+              {!user.profileCompleted ? (
+                <>
+                  <Route path="/employer/profile" element={<CompanyProfile />} />
+                  <Route
+                    path="*"
+                    element={<Navigate to="/employer/profile" />}
+                  />
+                </>
+              ) : (
+                <>
+                  <Route
+                    path="/employer/dashboard"
+                    element={<CompanyDashboard />}
+                  />
+                  <Route
+                    path="/employer/createjob"
+                    element={<CreateJob />}
+                  />
+                  <Route
+                    path="/employer/applications"
+                    element={<EmployerApplications />}
+                  />
+                  <Route
+                    path="/employer/manage-jobs"
+                    element={<EmployerManageJobs />}
+                  />
+                  <Route
+                    path="/company/jobs/:jobId/applicants"
+                    element={<JobApplicants />}
+                  />
+                  <Route
+                    path="*"
+                    element={<Navigate to="/employer/dashboard" />}
+                  />
+                </>
+              )}
             </>
           )}
         </>
