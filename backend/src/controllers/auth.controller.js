@@ -175,9 +175,17 @@ exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
+
     if (!user)
       return res.status(404).json({ message: "User not found" });
 
+    // 🔥 Delete old password reset OTPs
+    await Otp.deleteMany({
+      ownerId: user._id,
+      purpose: "password_reset",
+    });
+
+    // Generate new OTP
     const otp = generateOtp();
     const hashedOtp = await bcrypt.hash(otp, 10);
 
@@ -186,12 +194,18 @@ exports.forgotPassword = async (req, res) => {
       ownerType: user.role,
       otp: hashedOtp,
       purpose: "password_reset",
-      expiresAt: Date.now() + 10 * 60 * 1000,
+      attempts: 0,
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 min
     });
 
-    await sendEmail(email, "Reset Password OTP", `Your OTP is: ${otp}`);
+    await sendEmail(
+      email,
+      "Reset Password OTP",
+      `Your password reset OTP is: ${otp}. It is valid for 10 minutes.`
+    );
 
     res.json({ message: "OTP sent for password reset" });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -204,6 +218,10 @@ exports.resetPassword = async (req, res) => {
     const { email, otp, newPassword } = req.body;
 
     const user = await User.findOne({ email });
+
+    if (!user)
+      return res.status(404).json({ message: "User not found" });
+
     const otpDoc = await Otp.findOne({
       ownerId: user._id,
       purpose: "password_reset",
@@ -215,15 +233,27 @@ exports.resetPassword = async (req, res) => {
     if (otpDoc.expiresAt < Date.now())
       return res.status(400).json({ message: "OTP expired" });
 
-    const isMatch = await bcrypt.compare(otp, otpDoc.otp);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid OTP" });
+    if (otpDoc.attempts >= 5)
+      return res.status(429).json({ message: "Too many attempts" });
 
-    user.password = await bcrypt.hash(newPassword, 10);
+    const isMatch = await bcrypt.compare(otp, otpDoc.otp);
+
+    if (!isMatch) {
+      otpDoc.attempts += 1;
+      await otpDoc.save();
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
     await user.save();
+
+    // Delete OTP after success
     await Otp.deleteOne({ _id: otpDoc._id });
 
     res.json({ message: "Password reset successful" });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
