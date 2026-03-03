@@ -48,6 +48,7 @@ exports.register = async (req, res) => {
         html: `<h2>Your OTP: ${otp}</h2><p>Valid for 10 minutes</p>`,
       });
     } catch (emailError) {
+      console.log("Error fromt the Auth Controller")
       console.error("EMAIL ERROR:", emailError.message);
     }
 
