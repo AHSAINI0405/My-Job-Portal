@@ -85,6 +85,49 @@ exports.verifyOtp = async (req, res) => {
   }
 };
 
+// ================= RESEND OTP =================
+exports.resendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user)
+      return res.status(404).json({ message: "User not found" });
+
+    if (user.isVerified)
+      return res.status(400).json({ message: "User already verified" });
+
+    // Delete existing OTP for email verification
+    await Otp.deleteMany({
+      ownerId: user._id,
+      purpose: "email_verification",
+    });
+
+    const otp = generateOtp();
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    await Otp.create({
+      ownerId: user._id,
+      ownerType: user.role,
+      otp: hashedOtp,
+      purpose: "email_verification",
+      attempts: 0,
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+    });
+
+    await sendEmail(
+      email,
+      "Resend Email Verification OTP",
+      `Your new OTP is: ${otp}`
+    );
+
+    res.json({ message: "New OTP sent successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // ================= LOGIN =================
 exports.login = async (req, res) => {
