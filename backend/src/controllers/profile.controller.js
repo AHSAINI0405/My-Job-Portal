@@ -66,6 +66,15 @@ exports.completeCompanyProfile = async (req, res) => {
         message: "All company profile fields required",
       });
     }
+    
+    const user = await User.findByIdAndUpdate(
+      {userId:companyId},
+      {
+        profileCompleted: true,
+      },
+      { new: true }
+    );
+
 
     const company = await Company.findByIdAndUpdate(
       companyId,

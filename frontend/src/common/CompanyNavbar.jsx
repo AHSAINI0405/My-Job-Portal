@@ -46,7 +46,7 @@ const CompanyNavbar = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("role");
-    navigate("/");
+    navigate("/login");
   };
 
   const linkClass = ({ isActive }) =>
