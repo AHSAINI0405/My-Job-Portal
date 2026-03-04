@@ -4,6 +4,7 @@ const User = require("../models/User");
 const Otp = require("../models/Otp");
 const generateOtp = require("../utils/generateOtp");
 const sendEmail = require("../utils/sendEmail");
+const Company = require("../models/Company")
 
 
 // ================= REGISTER =================
@@ -11,20 +12,42 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // 🔥 Create user
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       role,
       isVerified: false,
+      profileCompleted: false,
     });
 
+    // 🔥 If role is company → create company profile
+    if (role === "company") {
+      await Company.create({
+        _id: user._id,   // VERY IMPORTANT (must match user ID)
+        name: name,
+        email: email,
+        website: "",
+        industry: "",
+        description: "",
+        location: "",
+        logo: "",
+        profileCompleted: false,
+      });
+    }
+
+    // 🔐 Generate OTP
     const otp = generateOtp();
     const hashedOtp = await bcrypt.hash(otp, 10);
 
@@ -33,12 +56,20 @@ exports.register = async (req, res) => {
       ownerType: role,
       otp: hashedOtp,
       purpose: "email_verification",
+      attempts: 0,
       expiresAt: Date.now() + 10 * 60 * 1000,
     });
 
-    await sendEmail(email, "Verify Your Email", `Your OTP is: ${otp}`);
+    await sendEmail(
+      email,
+      "Verify Your Email",
+      `Your OTP is: ${otp}`
+    );
 
-    res.status(201).json({ message: "Registered. OTP sent to email." });
+    res.status(201).json({
+      message: "Registered successfully. OTP sent to email.",
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -37,7 +37,7 @@ const CompanyProfile = () => {
     try {
       setLoading(true);
       const res = await api.get("/api/profile/company");
-
+      console.log("Response fetched:",res)
       const company = res.data;
 
       setFormData({
@@ -82,7 +82,7 @@ const handleSubmit = async (e) => {
 
   try {
     const res = await api.put("/api/profile/company", formData);
-
+    
     // ✅ 1. Update localStorage user object
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
