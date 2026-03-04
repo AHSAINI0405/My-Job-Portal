@@ -75,7 +75,10 @@ const AppRoutes = () => {
                   <Route path="/employer/profile" element={<CompanyProfile />} />
                   <Route
                     path="*"
-                    element={<Navigate to="/employer/profile" />}
+                    element={<Navigate to="/employer/profile" state={{
+                          message:
+                            "Please complete your profile before accessing other sections.",
+                        }}/> }
                   />
                 </>
               ) : (

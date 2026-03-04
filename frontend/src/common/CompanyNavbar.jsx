@@ -11,6 +11,9 @@ import {
   X,
 } from "lucide-react";
 import api from "../api/axios";
+
+const storedUser = localStorage.getItem("user");
+const user = storedUser ? JSON.parse(storedUser) : null;
 const CompanyNavbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -41,6 +44,8 @@ const CompanyNavbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("company");
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     navigate("/");
   };
 
