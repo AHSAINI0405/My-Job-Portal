@@ -68,7 +68,7 @@ exports.completeCompanyProfile = async (req, res) => {
     }
     
     const user = await User.findByIdAndUpdate(
-      {userId:companyId},
+      companyId,
       {
         profileCompleted: true,
       },
@@ -91,7 +91,7 @@ exports.completeCompanyProfile = async (req, res) => {
 
     res.status(200).json({
       message: "Company profile completed",
-      company,
+      company,user
     });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
