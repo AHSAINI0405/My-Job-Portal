@@ -22,7 +22,7 @@ const ActiveJobs = () => {
       const jobsRes = await api.get("/api/jobs/jobs");
       setJobs(jobsRes.data);
 
-      const appRes = await api.get("/api/applications/my");
+      const appRes = await api.get("/api/applications/me");
       setApplications(appRes.data);
 
     } catch (error) {
@@ -48,7 +48,7 @@ const ActiveJobs = () => {
   };
 
   const getApplication = (jobId) =>
-    applications.find((app) => app.jobId === jobId);
+    applications.find((app) => app.job?._id === jobId);
 
   if (loading) {
     return <Navbar />;

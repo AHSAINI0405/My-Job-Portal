@@ -1,18 +1,26 @@
 import { useState } from "react";
 import api from "../../api/axios";
 
-const ApplyJobModal = ({ job, onClose }) => {
+const ApplyJobModal = ({ job, onClose, onApplied }) => {
   const [loading, setLoading] = useState(false);
 
   const handleApply = async () => {
     try {
       setLoading(true);
-      await api.post(`/api/jobs/${job._id}/apply`);
-      alert("Application submitted successfully!");
+
+      const res = await api.post(`/api/jobs/${job._id}/apply`);
+
+      onApplied({
+        ...res.data,
+        jobId: job._id,
+        status: "Pending"
+      });
+
       onClose();
     } catch (err) {
       alert(err.response?.data?.message || "Already applied");
     }
+
     setLoading(false);
   };
 
@@ -24,7 +32,7 @@ const ApplyJobModal = ({ job, onClose }) => {
         </h2>
 
         <p className="text-gray-600 mb-6">
-          Your profile details will be submitted with this application.
+          Your profile details will be submitted.
         </p>
 
         <div className="flex gap-3">

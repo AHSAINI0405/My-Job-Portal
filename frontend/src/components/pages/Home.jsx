@@ -56,8 +56,8 @@ export default function Home() {
               </span>
             </div>
             <div className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition">Find Jobs</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition">Companies</a>
+              <button className="text-gray-700 hover:text-blue-600 transition" onClick={()=>navigate('/find-jobs')}>Find Jobs</button>
+              <a href="/companies" className="text-gray-700 hover:text-blue-600 transition">Companies</a>
               <a href="#" className="text-gray-700 hover:text-blue-600 transition">About</a>
             </div>
             <div className="flex space-x-4">

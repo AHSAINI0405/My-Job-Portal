@@ -13,7 +13,8 @@ import MyApplications from "../components/pages/MyApplications";
 import EmployerApplications from "../components/pages/EmployerApplications";
 import EmployerManageJobs from "../components/pages/EmployerManageJobs";
 import ForgotPassword from "../components/pages/ForgotPassword";
-
+import FindJobs from "../components/pages/FindJobs";
+import Companies from "../components/pages/Companies";
 const AppRoutes = () => {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
@@ -29,6 +30,8 @@ const AppRoutes = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/find-jobs" element={<FindJobs/>}/>
+          <Route path="/companies" element={<Companies/>}/>
         </>
       ) : (
         <>

@@ -18,6 +18,7 @@ router.put(
 
 router.get("/company", auth,profileController.companyProfile);
 router.get("/user",auth,profileController.userProfile);
+router.get("/companies", profileController.companyProfile);
 module.exports = router;
 
 

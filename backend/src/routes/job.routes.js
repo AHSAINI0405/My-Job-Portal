@@ -15,4 +15,7 @@ router.put("/jobs/:id", auth, companyProfileGuard, job.updateJob);
 
 // COMPANY → DELETE JOB
 router.delete("/jobs/:id", auth, companyProfileGuard, job.deleteJob);
+
+router.get("/public", job.getActiveJobs);
 module.exports = router;
+
