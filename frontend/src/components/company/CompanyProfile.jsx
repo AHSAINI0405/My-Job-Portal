@@ -97,7 +97,9 @@ const handleSubmit = async (e) => {
     toast.success("Profile updated successfully 🚀");
 
     setEditing(false);
+    window.location.reload();
     fetchCompanyProfile();
+    
 
   } catch (error) {
     toast.error("Failed to update profile ❌");
