@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [location, setLocation] = useState('');
-  localStorage.removeItem("user");
-  localStorage.removeItem("token");
   const stats = [
     { icon: Briefcase, value: '50,000+', label: 'Active Jobs' },
     { icon: Users, value: '100,000+', label: 'Job Seekers' },

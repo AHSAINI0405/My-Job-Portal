@@ -98,7 +98,6 @@ const handleSubmit = async (e) => {
 
     setEditing(false);
     window.location.reload();
-    fetchCompanyProfile();
     
 
   } catch (error) {

@@ -29,9 +29,9 @@ const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="*" element={<Navigate to="/" />} />
           <Route path="/find-jobs" element={<FindJobs/>}/>
           <Route path="/companies" element={<Companies/>}/>
+          <Route path="*" element={<Navigate to="/" />} />
         </>
       ) : (
         <>

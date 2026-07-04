@@ -93,14 +93,33 @@ useEffect(() => {
     e.preventDefault();
     setSaving(true);
 
-    await api.put("/api/profile/user", {
-      ...formData,
-      skills: formData.skills.split(",").map((s) => s.trim()),
-    });
+    try {
+      await api.put("/api/profile/user", {
+        ...formData,
+        skills: typeof formData.skills === "string" 
+          ? formData.skills.split(",").map((s) => s.trim()) 
+          : formData.skills,
+      });
 
-    setEditing(false);
-    fetchProfile();
-    setSaving(false);
+      // Update localStorage user object
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (storedUser) {
+        const updatedUser = {
+          ...storedUser,
+          profileCompleted: true,
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+
+      toast.success("Profile updated successfully 🚀");
+      setEditing(false);
+      window.location.reload();
+    } catch (error) {
+      toast.error("Failed to update profile ❌");
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
   };
 if (loading) {
   return (

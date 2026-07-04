@@ -28,7 +28,7 @@ const FindJobs = () => {
       return;
     }
 
-    navigate(`/apply/${jobId}`);
+    navigate("/jobs");
   };
 
   const filteredJobs = jobs.filter((job) =>

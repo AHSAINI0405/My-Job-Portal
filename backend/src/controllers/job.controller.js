@@ -58,7 +58,7 @@ exports.getActiveJobs = async (req, res) => {
       dueDate: { $gte: today },
       status: "active"
     })
-      .populate("company", "companyName email") // only required fields
+      .populate("company", "name email") // only required fields
       .sort({ createdAt: -1 });
 
     res.json(jobs);

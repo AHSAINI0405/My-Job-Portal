@@ -6,26 +6,36 @@ const Job = require("../models/Job");
  * - expired jobs are excluded
  */
 exports.searchJobs = async (req, res) => {
-  const { keyword } = req.query;
+  try {
+    const { keyword } = req.query;
 
-  // current date to block expired jobs
-  const today = new Date();
+    // current date to block expired jobs
+    const today = new Date();
 
-  /**
-   * $or → search in multiple fields
-   * $regex → partial match
-   * $options: "i" → case-insensitive
-   */
-  const jobs = await Job.find({
-    dueDate: { $gte: today },
-    $or: [
-      { title: { $regex: keyword, $options: "i" } }
-    ]
-  })
-    .populate("company", "companyName") // only get companyName
-    .sort({ createdAt: -1 }); // latest jobs on top
+    /**
+     * $or → search in multiple fields
+     * $regex → partial match
+     * $options: "i" → case-insensitive
+     */
+    const query = {
+      dueDate: { $gte: today },
+    };
 
-  res.json(jobs);
+    if (keyword) {
+      query.$or = [
+        { title: { $regex: keyword, $options: "i" } }
+      ];
+    }
+
+    const jobs = await Job.find(query)
+      .populate("company", "name") // only get name
+      .sort({ createdAt: -1 }); // latest jobs on top
+
+    res.json(jobs);
+  } catch (error) {
+    console.error("Search Jobs Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
 
@@ -40,16 +50,26 @@ const User = require("../models/User");
  * - location
  */
 exports.searchCandidates = async (req, res) => {
-  const { keyword } = req.query;
+  try {
+    const { keyword } = req.query;
 
-  const users = await User.find({
-    profileCompleted: true, // only complete profiles
-    $or: [
-      { name: { $regex: keyword, $options: "i" } },
-      { "profile.skills": { $regex: keyword, $options: "i" } },
-      { "profile.location": { $regex: keyword, $options: "i" } }
-    ]
-  }).select("-password"); // never send password
+    const query = {
+      profileCompleted: true, // only complete profiles
+    };
 
-  res.json(users);
+    if (keyword) {
+      query.$or = [
+        { name: { $regex: keyword, $options: "i" } },
+        { skills: { $regex: keyword, $options: "i" } },
+        { location: { $regex: keyword, $options: "i" } }
+      ];
+    }
+
+    const users = await User.find(query).select("-password"); // never send password
+
+    res.json(users);
+  } catch (error) {
+    console.error("Search Candidates Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };

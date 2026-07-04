@@ -138,7 +138,7 @@ const CompanyNavbar = () => {
       {open && (
         <div className="md:hidden bg-purple-700 px-6 py-4 space-y-3">
           <NavLink to="/employer/dashboard" className={linkClass} onClick={() => setOpen(false)}>Dashboard</NavLink>
-          <NavLink to="/employer/post-job" className={linkClass} onClick={() => setOpen(false)}>Post Job</NavLink>
+          <NavLink to="/employer/createjob" className={linkClass} onClick={() => setOpen(false)}>Post Job</NavLink>
           <NavLink to="/employer/manage-jobs" className={linkClass} onClick={() => setOpen(false)}>Manage Jobs</NavLink>
           <NavLink to="/employer/applications" className={linkClass} onClick={() => setOpen(false)}>Applications</NavLink>
           <NavLink to="/employer/profile" className={linkClass} onClick={() => setOpen(false)}>Profile</NavLink>

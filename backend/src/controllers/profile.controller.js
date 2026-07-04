@@ -123,15 +123,28 @@ exports.companyProfile=async (req, res) => {
 exports.userProfile=async (req,res)=>{
   try{
     if(req.user.role !== "user"){
-      return res.status(403).json({message:"Access Denied"})}
-      const user=await User.findById(req.user.id).select("-password");
-      if(!user){
-        return res.status(404).json({message:"COmpany not found"});
-      }
-      res.status(200).json(user);
+      return res.status(403).json({message:"Access Denied"});
     }
-    catch(error)
-    {
-      console.log(error);
+    const user=await User.findById(req.user.id).select("-password");
+    if(!user){
+      return res.status(404).json({message:"User not found"});
     }
-  };
+    res.status(200).json(user);
+  }
+  catch(error)
+  {
+    console.error("Get user profile error:", error);
+    res.status(500).json({message: "Server error"});
+  }
+};
+
+// GET ALL COMPANIES
+exports.getAllCompanies = async (req, res) => {
+  try {
+    const companies = await Company.find({ profileCompleted: true }).select("-password");
+    res.status(200).json(companies);
+  } catch (error) {
+    console.error("Get all companies error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
