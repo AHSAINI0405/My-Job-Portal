@@ -148,3 +148,17 @@ exports.getAllCompanies = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// GET COMPANY BY ID (public)
+exports.getCompanyById = async (req, res) => {
+  try {
+    const company = await Company.findById(req.params.id).select("-password");
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    res.status(200).json(company);
+  } catch (error) {
+    console.error("Get company by id error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

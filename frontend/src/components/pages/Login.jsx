@@ -325,6 +325,7 @@ export default function Login() {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
                     className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl outline-none transition ${
                       errors.password
                         ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'

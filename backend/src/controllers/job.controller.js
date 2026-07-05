@@ -58,7 +58,7 @@ exports.getActiveJobs = async (req, res) => {
       dueDate: { $gte: today },
       status: "active"
     })
-      .populate("company", "name email") // only required fields
+      .populate("company", "name email logo") // only required fields
       .sort({ createdAt: -1 });
 
     res.json(jobs);
@@ -138,6 +138,26 @@ exports.deleteJob = async (req, res) => {
 
   } catch (error) {
     console.error("Delete Job Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// =======================================
+// PUBLIC → GET JOBS BY COMPANY ID
+// =======================================
+exports.getJobsByCompanyId = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    const today = new Date();
+    const jobs = await Job.find({
+      company: companyId,
+      status: "active",
+      dueDate: { $gte: today }
+    }).populate("company", "name logo").sort({ createdAt: -1 });
+
+    res.json(jobs);
+  } catch (error) {
+    console.error("Get Jobs By Company Error:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };

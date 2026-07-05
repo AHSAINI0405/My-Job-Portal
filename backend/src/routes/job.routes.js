@@ -17,5 +17,6 @@ router.put("/jobs/:id", auth, companyProfileGuard, job.updateJob);
 router.delete("/jobs/:id", auth, companyProfileGuard, job.deleteJob);
 
 router.get("/public", job.getActiveJobs);
+router.get("/company/:companyId", job.getJobsByCompanyId);
 module.exports = router;
 

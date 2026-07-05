@@ -19,6 +19,7 @@ router.put(
 router.get("/company", auth,profileController.companyProfile);
 router.get("/user",auth,profileController.userProfile);
 router.get("/companies", profileController.getAllCompanies);
+router.get("/companies/:id", profileController.getCompanyById);
 module.exports = router;
 
 

@@ -7,8 +7,9 @@ exports.analyzeResume = async (req, res) => {
   const { resumeBase64, jobText } = req.body;
 
   try {
+    const AI_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
     const response = await axios.post(
-      "http://localhost:8000/analyze",
+      `${AI_URL}/analyze`,
       {
         resume_base64: resumeBase64,
         job_text: jobText
