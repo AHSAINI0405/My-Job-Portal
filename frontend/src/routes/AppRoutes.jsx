@@ -15,6 +15,7 @@ import EmployerManageJobs from "../components/pages/EmployerManageJobs";
 import ForgotPassword from "../components/pages/ForgotPassword";
 import FindJobs from "../components/pages/FindJobs";
 import Companies from "../components/pages/Companies";
+import CompanyDetails from "../components/pages/CompanyDetails";
 const AppRoutes = () => {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
@@ -31,6 +32,7 @@ const AppRoutes = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/find-jobs" element={<FindJobs/>}/>
           <Route path="/companies" element={<Companies/>}/>
+          <Route path="/companies/:id" element={<CompanyDetails />} />
           <Route path="*" element={<Navigate to="/" />} />
         </>
       ) : (
@@ -63,6 +65,7 @@ const AppRoutes = () => {
                   <Route path="/dashboard" element={<DashboardUser />} />
                   <Route path="/profile" element={<UserProfile />} />
                   <Route path="/jobs" element={<ActiveJobs />} />
+                  <Route path="/companies/:id" element={<CompanyDetails />} />
                   <Route path="/myapplications" element={<MyApplications />} />
                   <Route path="*" element={<Navigate to="/dashboard" />} />
                 </>
@@ -105,6 +108,10 @@ const AppRoutes = () => {
                   <Route
                     path="/company/jobs/:jobId/applicants"
                     element={<JobApplicants />}
+                  />
+                  <Route
+                    path="/employer/profile"
+                    element={<CompanyProfile />}
                   />
                   <Route
                     path="*"

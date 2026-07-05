@@ -166,7 +166,7 @@ if (loading) {
               {/* Avatar Upload */}
               <div className="flex items-center gap-6">
                 <img
-                  src={formData.avatar || "https://via.placeholder.com/120"}
+                  src={formData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name || 'User'}`}
                   alt="Avatar"
                   className="w-28 h-28 rounded-full object-cover border-4 border-indigo-100"
                 />
@@ -235,9 +235,10 @@ if (loading) {
               />
 
               <input
-                type="text"
+                type="number"
+                min="0"
                 name="experience"
-                placeholder="Experience"
+                placeholder="Experience (Years)"
                 value={formData.experience}
                 onChange={handleChange}
                 className="w-full p-3 border rounded-lg"
@@ -294,7 +295,7 @@ if (loading) {
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-6">
                 <img
-                  src={formData.avatar || "https://via.placeholder.com/120"}
+                  src={formData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name || 'User'}`}
                   alt="Avatar"
                   className="w-28 h-28 rounded-full object-cover border-4 border-indigo-100"
                 />

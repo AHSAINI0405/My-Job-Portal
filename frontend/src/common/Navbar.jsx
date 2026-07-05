@@ -18,7 +18,9 @@ const Navbar = ({ username }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/login");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/login";
   };
 
   const navLinkClass = ({ isActive }) =>

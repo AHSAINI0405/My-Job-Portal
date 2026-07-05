@@ -4,13 +4,13 @@ const axios = require("axios");
  * Send resume + job data to Python AI service
  */
 exports.analyzeResume = async (req, res) => {
-  const { resumeText, jobText } = req.body;
+  const { resumeBase64, jobText } = req.body;
 
   try {
     const response = await axios.post(
       "http://localhost:8000/analyze",
       {
-        resume_text: resumeText,
+        resume_base64: resumeBase64,
         job_text: jobText
       }
     );

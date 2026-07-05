@@ -96,7 +96,8 @@ const CreateJob = () => {
               className="w-full p-3 border rounded-lg"
             />
             <input
-              type="text"
+              type="number"
+              min="1"
               name="vacancy"
               placeholder="Vacancy"
               value={formData.vacancy}

@@ -16,10 +16,10 @@ exports.completeUserProfile = async (req, res) => {
       avatar
     } = req.body;
 
-    // basic validation
-    if (!phone || !education || !skills || !experience) {
+    // Allow partial updates for subsequent profile edits
+    if (!req.user.profileCompleted && (!phone || !education || !skills || !experience)) {
       return res.status(400).json({
-        message: "All profile fields are required",
+        message: "Phone, education, skills, and experience are required to complete profile.",
       });
     }
 
