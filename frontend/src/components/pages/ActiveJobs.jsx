@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api/axios";
-import ApplyJobModal from "./ApplyJobModal";
+import JobDetailsModal from "./JobDetailsModal";
 import Navbar from "../../common/Navbar";
 import toast from "react-hot-toast";
-import { MapPin, Briefcase, Calendar, IndianRupee, Building2, Search, Filter } from "lucide-react";
+import { MapPin, Briefcase, Calendar, IndianRupee, Building2, Search, Filter, Info } from "lucide-react";
 
 const ActiveJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -38,7 +38,6 @@ const ActiveJobs = () => {
 
   const handleApplied = (application) => {
     setApplications((prev) => [...prev, application]);
-    toast.success("Application submitted successfully 🎉");
   };
 
   const handleWithdraw = async (appId) => {
@@ -134,7 +133,8 @@ const ActiveJobs = () => {
                 return (
                   <div
                     key={job._id}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col group"
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col group cursor-pointer"
+                    onClick={() => setSelectedJob(job)}
                   >
                     <div className="p-6 flex-1">
                       {/* Company + Type */}
@@ -170,7 +170,7 @@ const ActiveJobs = () => {
                           {job.company?.name}
                         </Link>
                       ) : (
-                        <p className="text-sm text-gray-500 mb-2 flex items-center gap-1.5">
+                        <p className="text-sm text-gray-500 mb-2 flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                           <Building2 size={15} />
                           {job.company?.name}
                         </p>
@@ -220,7 +220,7 @@ const ActiveJobs = () => {
                     </div>
 
                     {/* Button */}
-                    <div className="px-6 pb-6">
+                    <div className="px-6 pb-6" onClick={(e) => e.stopPropagation()}>
                       {!isApplied ? (
                         <button
                           onClick={() => setSelectedJob(job)}
@@ -246,10 +246,14 @@ const ActiveJobs = () => {
       </div>
 
       {selectedJob && (
-        <ApplyJobModal
+        <JobDetailsModal
           job={selectedJob}
           onClose={() => setSelectedJob(null)}
+          isApplied={!!getApplication(selectedJob._id)}
+          application={getApplication(selectedJob._id)}
           onApplied={handleApplied}
+          onWithdraw={handleWithdraw}
+          user={user}
         />
       )}
     </>

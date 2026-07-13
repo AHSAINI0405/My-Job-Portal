@@ -145,13 +145,43 @@ exports.applyToJob = async (req, res) => {
  * GET APPLIED JOBS (USER DASHBOARD)
  */
 exports.getAppliedJobs = async (req, res) => {
-  const applications = await Application.find({
-    user: req.user.id,
-  }).populate("job")
-  .populate("company")
-  .populate("user");
+  try {
+    const applications = await Application.find({
+      user: req.user.id,
+    })
+    .populate({ path: "job", populate: { path: "company", select: "name logo location industry website" } })
+    .populate("company", "name logo location industry website")
+    .sort({ createdAt: -1 });
 
-  res.json(applications);
+    res.json(applications);
+  } catch (error) {
+    console.error("Get applied jobs error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/**
+ * WITHDRAW APPLICATION (DELETE)
+ */
+exports.withdrawApplication = async (req, res) => {
+  try {
+    const application = await Application.findById(req.params.id);
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    // Ensure only the owner can withdraw
+    if (application.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    await Application.findByIdAndDelete(req.params.id);
+    res.json({ message: "Application withdrawn successfully" });
+  } catch (error) {
+    console.error("Withdraw error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 

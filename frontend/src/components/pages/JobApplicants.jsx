@@ -76,6 +76,24 @@ const JobApplicants = () => {
     }
   };
 
+  const viewResume = (resumeBase64) => {
+    try {
+      const base64Data = resumeBase64.includes(",") ? resumeBase64.split(",")[1] : resumeBase64;
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const blobURL = URL.createObjectURL(blob);
+      window.open(blobURL, "_blank");
+    } catch (error) {
+      console.error("Error displaying resume:", error);
+      alert("Failed to open resume. Invalid file format.");
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -156,12 +174,7 @@ const JobApplicants = () => {
                   <div className="mt-5 flex items-center justify-between border-t border-gray-50 pt-5">
                     {app.user?.resume ? (
                       <button
-                        onClick={() => {
-                          const pdfWindow = window.open("");
-                          pdfWindow.document.write(
-                            `<iframe width='100%' height='100%' src='${app.user.resume}'></iframe>`
-                          );
-                        }}
+                        onClick={() => viewResume(app.user.resume)}
                         className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-semibold transition"
                       >
                         <FileText size={16} /> View Resume

@@ -42,4 +42,12 @@ router.get(
   protect,
   applicationController.getCompanyApplications
 );
+
+// Withdraw application (user)
+router.delete(
+  "/applications/:id",
+  protect,
+  applicationController.withdrawApplication
+);
+
 module.exports = router;

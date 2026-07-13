@@ -7,11 +7,14 @@ import {
   CheckCircle,
   XCircle,
   Briefcase,
+  Brain
 } from "lucide-react";
 
 const EmployerApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [analyzingIds, setAnalyzingIds] = useState({});
+  const [matchScores, setMatchScores] = useState({});
 
   useEffect(() => {
     fetchApplications();
@@ -30,10 +33,55 @@ const EmployerApplications = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await api.patch(`/api/applications/${id}`, { status });
+      // Map to patch endpoints
+      const type = status === "shortlisted" ? "shortlist" : "reject";
+      await api.patch(`/api/applications/${id}/${type}`);
       fetchApplications();
     } catch (error) {
       console.error("Error updating status:", error);
+    }
+  };
+
+  const handleAIMatch = async (appId, resumeBase64, jobDescription) => {
+    if (!jobDescription) {
+      alert("Job description is missing. Cannot perform AI match.");
+      return;
+    }
+    if (!resumeBase64) {
+      alert("Applicant has no resume uploaded.");
+      return;
+    }
+
+    setAnalyzingIds(prev => ({ ...prev, [appId]: true }));
+    try {
+      const res = await api.post("/api/ai/analyze", {
+        resumeBase64: resumeBase64,
+        jobText: jobDescription
+      });
+      setMatchScores(prev => ({ ...prev, [appId]: res.data.match_percentage }));
+    } catch (err) {
+      console.error("AI Analysis failed", err);
+      alert("AI Analysis failed. Make sure the AI service is running.");
+    } finally {
+      setAnalyzingIds(prev => ({ ...prev, [appId]: false }));
+    }
+  };
+
+  const viewResume = (resumeBase64) => {
+    try {
+      const base64Data = resumeBase64.includes(",") ? resumeBase64.split(",")[1] : resumeBase64;
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const blobURL = URL.createObjectURL(blob);
+      window.open(blobURL, "_blank");
+    } catch (error) {
+      console.error("Error displaying resume:", error);
+      alert("Failed to open resume. Invalid file format.");
     }
   };
 
@@ -49,22 +97,9 @@ const EmployerApplications = () => {
           </h1>
 
           {loading ? (
-           <div className="min-h-[60vh] flex items-center justify-center">
-
-    <div className="flex gap-4">
-
-      <div className="wave w-8 h-8 rounded-full bg-indigo-700"></div>
-
-      <div className="wave w-8 h-8 rounded-full bg-green-500"></div>
-
-      <div className="wave w-8 h-8 rounded-full bg-sky-400"></div>
-
-      <div className="wave w-8 h-8 rounded-full bg-yellow-400"></div>
-
-    </div>
-
-  </div>
-
+            <div className="min-h-[60vh] flex items-center justify-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+            </div>
           ) : applications.length === 0 ? (
             <div className="bg-white p-10 rounded-2xl shadow text-center">
               <p className="text-gray-500 text-lg">
@@ -118,30 +153,47 @@ const EmployerApplications = () => {
                       )}
                     </div>
 
-                    {/* Resume */}
-                    {app.user?.resume && (
-                      <div className="mt-3">
-                        <a
-                          href={
-                            app.user.resume.startsWith("data:")
-                              ? app.user.resume
-                              : `data:application/pdf;base64,${app.user.resume}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+                    {/* Resume + AI Match */}
+                    <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
+                      {app.user?.resume ? (
+                        <button
+                          onClick={() => viewResume(app.user.resume)}
+                          className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-semibold transition"
                         >
                           <FileText size={16} />
                           View Resume
-                        </a>
+                        </button>
+                      ) : (
+                        <span className="text-gray-400 text-sm italic">No resume</span>
+                      )}
+
+                      <div className="flex items-center gap-3">
+                        {matchScores[app._id] !== undefined ? (
+                          <span className="bg-purple-100 text-purple-700 font-bold px-3 py-1 rounded-full text-sm">
+                            {matchScores[app._id]}% Match
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleAIMatch(app._id, app.user?.resume, app.job?.description)}
+                            disabled={analyzingIds[app._id]}
+                            className="flex items-center gap-1.5 bg-purple-50 text-purple-600 hover:bg-purple-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                          >
+                            {analyzingIds[app._id] ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                            ) : (
+                              <Brain size={16} />
+                            )}
+                            AI Match
+                          </button>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
 
                   {/* ===== STATUS + ACTION ===== */}
                   <div className="flex justify-between items-center mt-6">
                     <span
-                      className={`px-3 py-1 text-xs rounded-full font-medium
+                      className={`px-3 py-1 text-xs rounded-full font-medium uppercase tracking-wider
                         ${
                           app.status === "shortlisted"
                             ? "bg-green-100 text-green-700"

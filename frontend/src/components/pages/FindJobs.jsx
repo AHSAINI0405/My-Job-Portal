@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../../api/axios";
-import { Search, Briefcase, MapPin, Building2, Star, Clock } from 'lucide-react';
+import { Search, Briefcase, MapPin, Building2 } from 'lucide-react';
 import Navbar from "../../common/Navbar";
+import JobDetailsModal from "./JobDetailsModal";
+import toast from "react-hot-toast";
 
 const FindJobs = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [applications, setApplications] = useState([]);
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     fetchJobs();
+    if (user) {
+      fetchApplications();
+    }
   }, []);
 
   const fetchJobs = async () => {
@@ -28,13 +35,40 @@ const FindJobs = () => {
     }
   };
 
-  const handleApply = (jobId) => {
+  const fetchApplications = async () => {
+    try {
+      const res = await api.get("/api/applications/me");
+      setApplications(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getApplication = (jobId) =>
+    applications.find((app) => app.job?._id === jobId);
+
+  const handleApplied = (application) => {
+    setApplications((prev) => [...prev, application]);
+  };
+
+  const handleWithdraw = async (appId) => {
+    try {
+      await api.delete(`/api/applications/${appId}`);
+      setApplications(applications.filter((a) => a._id !== appId));
+      toast.success("Application withdrawn");
+    } catch (err) {
+      toast.error("Failed to withdraw");
+    }
+  };
+
+  const handleApplyClick = (e, job) => {
+    e.stopPropagation();
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
     }
-    navigate("/jobs"); // Ideally navigate to job details or apply directly
+    setSelectedJob(job);
   };
 
   const filteredJobs = jobs.filter((job) =>
@@ -134,60 +168,95 @@ const FindJobs = () => {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-            {filteredJobs.map((job) => (
-              <div
-                key={job._id}
-                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col h-full group"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl border border-indigo-100">
-                    {job.company?.logo ? (
-                      <img src={job.company.logo} alt="Logo" className="w-full h-full rounded-lg object-contain" />
-                    ) : (
-                      job.company?.name?.charAt(0) || "C"
+            {filteredJobs.map((job) => {
+              const application = getApplication(job._id);
+              const isApplied = !!application;
+
+              return (
+                <div
+                  key={job._id}
+                  className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col h-full group cursor-pointer"
+                  onClick={() => setSelectedJob(job)}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl border border-indigo-100 overflow-hidden">
+                      {job.company?.logo ? (
+                        <img src={job.company.logo} alt="Logo" className="w-full h-full rounded-lg object-contain p-1" />
+                      ) : (
+                        job.company?.name?.charAt(0) || "C"
+                      )}
+                    </div>
+                    <span className="text-xs font-semibold bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                      {job.jobType || "Full-Time"}
+                    </span>
+                  </div>
+
+                  <Link to={`/companies/${job.company?._id}`} onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-indigo-600 transition mb-2">
+                    <Building2 size={16} />
+                    {job.company?.name || "Unknown Company"}
+                  </Link>
+
+                  <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition">
+                    {job.title}
+                  </h2>
+
+                  {isApplied && (
+                    <span className="inline-block bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 self-start">
+                      ✓ Already Applied
+                    </span>
+                  )}
+
+                  <div className="flex flex-wrap gap-3 mb-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin size={16} />
+                      {job.location}
+                    </div>
+                    {job.salary && (
+                      <div className="flex items-center gap-1.5 font-medium text-green-600">
+                        💰 {job.salary}
+                      </div>
                     )}
                   </div>
-                  <span className="text-xs font-semibold bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                    {job.jobType || "Full-Time"}
-                  </span>
-                </div>
 
-                <Link to={`/companies/${job.company?._id}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-indigo-600 transition mb-2">
-                  <Building2 size={16} />
-                  {job.company?.name || "Unknown Company"}
-                </Link>
+                  <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow">
+                    {job.description}
+                  </p>
 
-                <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition">
-                  {job.title}
-                </h2>
-
-                <div className="flex flex-wrap gap-3 mb-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin size={16} />
-                    {job.location}
+                  <div onClick={(e) => e.stopPropagation()} className="mt-auto">
+                    {!isApplied ? (
+                      <button
+                        onClick={(e) => handleApplyClick(e, job)}
+                        className="w-full bg-indigo-50 text-indigo-700 font-semibold py-3 rounded-xl hover:bg-indigo-600 hover:text-white transition duration-300"
+                      >
+                        Apply Now
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleWithdraw(application._id)}
+                        className="w-full bg-red-50 hover:bg-red-600 hover:text-white border border-red-200 text-red-600 font-semibold py-3 rounded-xl transition duration-300"
+                      >
+                        Withdraw Application
+                      </button>
+                    )}
                   </div>
-                  {job.salary && (
-                    <div className="flex items-center gap-1.5 font-medium text-green-600">
-                      💰 {job.salary}
-                    </div>
-                  )}
                 </div>
-
-                <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow">
-                  {job.description}
-                </p>
-
-                <button
-                  onClick={() => handleApply(job._id)}
-                  className="w-full bg-indigo-50 text-indigo-700 font-semibold py-3 rounded-xl hover:bg-indigo-600 hover:text-white transition duration-300 mt-auto"
-                >
-                  Apply Now
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
+
+      {selectedJob && (
+        <JobDetailsModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+          isApplied={!!getApplication(selectedJob._id)}
+          application={getApplication(selectedJob._id)}
+          onApplied={handleApplied}
+          onWithdraw={handleWithdraw}
+          user={user}
+        />
+      )}
     </div>
   );
 };
